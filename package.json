@@ -1,0 +1,84 @@
+{
+  "name": "Dansako",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@devexpress/dx-react-chart": "^2.7.6",
+    "@devexpress/dx-react-chart-bootstrap4": "^2.7.6",
+    "@devexpress/dx-react-chart-material-ui": "^2.7.6",
+    "@devexpress/dx-react-core": "^2.7.6",
+    "@material-ui/core": "^4.11.4",
+    "@material-ui/icons": "^4.11.2",
+    "@material-ui/lab": "^4.0.0-alpha.58",
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "@types/faker": "^5.5.6",
+    "@types/jest": "^26.0.22",
+    "@types/lodash": "^4.14.170",
+    "@types/node": "^14.14.41",
+    "@types/react": "^17.0.3",
+    "@types/react-dom": "^17.0.3",
+    "@types/react-router-dom": "^5.1.7",
+    "apexcharts": "^3.27.2",
+    "atomize": "^1.0.26",
+    "axios": "^0.21.1",
+    "bootstrap": "^4.6.0",
+    "chart.js": "^3.4.1",
+    "d3-ease": "^3.0.1",
+    "devextreme": "21.1",
+    "devextreme-react": "21.1",
+    "express": "^4.17.1",
+    "faker": "^5.5.3",
+    "firebase": "^8.6.5",
+    "joi": "^17.4.0",
+    "jquery": "^3.6.0",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.1",
+    "react": "^17.0.2",
+    "react-animations": "^1.0.0",
+    "react-apexcharts": "^1.3.9",
+    "react-bootstrap": "^1.5.2",
+    "react-chartjs-2": "^3.0.3",
+    "react-dom": "^17.0.2",
+    "react-redux": "^7.2.4",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "4.0.3",
+    "react-step-progress": "^1.0.3",
+    "react-transition-group": "^4.4.1",
+    "react-twitter-embed": "^3.0.3",
+    "redux": "^4.1.0",
+    "redux-persist": "^6.0.0",
+    "redux-saga": "^1.1.3",
+    "styletron-engine-atomic": "^1.4.7",
+    "styletron-react": "^6.0.1",
+    "typescript": "^4.2.4",
+    "web-vitals": "^1.0.1"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "start:dev": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {}
+}

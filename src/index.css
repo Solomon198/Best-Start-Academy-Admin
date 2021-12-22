@@ -1,0 +1,10 @@
+#container:fullscreen {
+  width: 100%;
+  height: 100%;
+}
+
+/* prefix for Chrome & Safari */
+#container:-webkit-full-screen {
+  width: 100%;
+  height: 100%;
+}
