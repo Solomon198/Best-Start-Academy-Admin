@@ -1,0 +1,20 @@
+.scroll {
+  overflow-y: scroll;
+}
+
+.outline {
+  border-color: white !important;
+  border-width: 1px;
+  color: white !important;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.hide-scroll-bar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.hide-scroll-bar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}

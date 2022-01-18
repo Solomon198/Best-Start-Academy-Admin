@@ -1,0 +1,7 @@
+#listItemText {
+  transition: color 0.5s all;
+}
+
+#listItemText:hover {
+  color: #4fc3f7;
+}

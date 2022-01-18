@@ -28,6 +28,7 @@ function* watchGetDashboardAnalytics() {
           payload: analyticalData.data.payload,
         });
       } catch (e) {
+        console.log(e);
         yield put({
           type: DashboardAnalytic.GET_DASHBOARD_ANALYTIC_FAILED,
           payload: e.message,

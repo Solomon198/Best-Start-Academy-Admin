@@ -12,7 +12,7 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import DriveEtaIcon from "@material-ui/icons/DriveEta";
+import Dashboard from "@material-ui/icons/Dashboard";
 import AirplayIcon from "@material-ui/icons/Airplay";
 import WorkIcon from "@material-ui/icons/Work";
 import { Security } from "@material-ui/icons";
@@ -110,6 +110,11 @@ function Navigator(props: NavigatorProps) {
         {
           id: "Subjects",
           icon: <AirplayIcon />,
+          route: "/dashboard/subjects",
+        },
+        {
+          id: "Result Manager",
+          icon: <Dashboard />,
           route: "/dashboard/subjects",
         },
         // {
