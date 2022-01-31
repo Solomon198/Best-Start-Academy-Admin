@@ -6,7 +6,7 @@ import TextField from "@material-ui/core/TextField";
 import "./style.css";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
-import FolderOpen from "@material-ui/icons/FolderOpen";
+import { FolderOpen, Close } from "@material-ui/icons";
 import CloudUpload from "@material-ui/icons/CloudUpload";
 import CheckIcon from "@material-ui/icons/Check";
 import { Avatar } from "@material-ui/core";
@@ -28,6 +28,10 @@ import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import DeleteIcon from "@material-ui/icons/Delete";
 import firebase from "firebase";
 import DialogComponent from "../../../components/dialog";
+import axios from "axios";
+import config from "../../../configs/env.config";
+
+const configuration = config();
 
 const mapStateToProps = (state: any) => ({
   cv: state.User.cv,
@@ -41,6 +45,10 @@ type Props = {
   addCredentialStatus: string;
   deleteCredentialStatus: string;
   user: any;
+  driverInfo: any;
+  uploadNew: boolean;
+  close: () => void;
+
   configureSnack: (payload: {
     show: boolean;
     status?: string;
@@ -80,6 +88,10 @@ class Credentials extends React.Component<Props> {
     deleting: false,
     fileId: "",
     deleteUrl: "",
+    term: "",
+    session: "",
+    viewResult: this.props.uploadNew,
+    loading: false,
   };
   showInitials() {
     let showInitials = false;
@@ -114,7 +126,62 @@ class Credentials extends React.Component<Props> {
     this.setState({ showDeleteDialog: !this.state.showDeleteDialog });
   };
 
+  viewResult() {
+    if (!this.state.term || !this.state.session) {
+      return this.props.configureSnack({
+        message: "Please enter term and session coorectly",
+        status: "error",
+        show: true,
+      });
+    }
+
+    this.setState({ loading: true });
+    const { session, term } = this.state;
+    const { driverLicense } = this.props.driverInfo;
+
+    axios
+      .get(configuration.API_ENDPOINT + "/result", {
+        params: {
+          regNo: driverLicense,
+          session,
+          term,
+        },
+      })
+      .then((data: any) => {
+        this.setState({ loading: false });
+        if (!(data as any).data.payload) {
+          this.props.configureSnack({
+            message: "Could not find result",
+            status: "error",
+            show: true,
+          });
+        } else {
+          this.setState({
+            filePath: data.data.payload.result,
+            file: data.data.payload.result,
+          });
+        }
+      })
+      .catch((e) => {
+        this.setState({ loading: false }, () => {
+          this.props.configureSnack({
+            message: e.message,
+            status: "error",
+            show: true,
+          });
+        });
+        console.log(e);
+      });
+  }
+
   uploadDocument() {
+    if (!this.state.term || !this.state.session) {
+      return this.props.configureSnack({
+        message: "Please enter term and session coorectly",
+        status: "error",
+        show: true,
+      });
+    }
     let time = new Date().getTime();
     this.setState({ uploading: true });
     const storageRef = firebase
@@ -145,14 +212,34 @@ class Credentials extends React.Component<Props> {
         // Handle successful uploads on complete
         // For instance, get the download URL: https://firebasestorage.googleapis.com/...
         uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-          this.setState({ uploading: false, addCredential: false }, () => {
-            this.props.addCredential({
-              name: this.state.name,
-              fileType: this.state.fileType,
-              url: downloadURL,
-              userId: this.props.user.userId,
+          const { driverLicense } = this.props.driverInfo;
+          const { session, term } = this.state;
+          const payload = {
+            regNo: driverLicense,
+            term,
+            session,
+            result: downloadURL,
+          };
+
+          axios
+            .post(configuration.API_ENDPOINT + "/result", payload)
+            .then((val) => {
+              this.setState({ uploading: false, addCredential: false }, () => {
+                this.props.close();
+                this.props.configureSnack({
+                  message: "Result uploaded successfully",
+                  status: "success",
+                  show: true,
+                });
+              });
             });
-          });
+
+          // this.props.addCredential({
+          //   name: this.state.name,
+          //   fileType: this.state.fileType,
+          //   url: downloadURL,
+          //   userId: this.props.user.userId,
+          // });
         });
       }
     );
@@ -172,7 +259,16 @@ class Credentials extends React.Component<Props> {
   };
 
   render() {
+    console.log(this.props.driverInfo);
     const cv = this.props.cv || {};
+    const isRemote = this.state.filePath.indexOf("https") >= 0 ? true : false;
+    const doc = [
+      {
+        uri: this.state.filePath,
+        fileType: "application/pdf",
+      },
+    ];
+    console.log(this.state);
     return (
       <div
         style={{
@@ -269,8 +365,16 @@ class Credentials extends React.Component<Props> {
                       style={{ width: "100%", height: "inherit" }}
                       className=" d-flex flex-column justify-content-center align-items-center"
                     >
-                      <h4 className="mt-5">No Previews</h4>
-                      <span>Select a Credential to preview</span>
+                      {this.state.loading ? (
+                        <>
+                          <h4 className="mt-5">Loading Result .... </h4>
+                        </>
+                      ) : (
+                        <>
+                          <h4 className="mt-5">No Previews</h4>
+                          <span>Select a Credential to preview</span>
+                        </>
+                      )}
                     </div>
                   )}
                 </div>
@@ -279,52 +383,80 @@ class Credentials extends React.Component<Props> {
           </div>
         )}
 
-        {this.state.addCredential && (
-          <div
-            style={{
-              height: "100%",
-              width: "100%",
-              backgroundColor: "white",
-            }}
-          >
-            <div className="row px-3" style={{ width: "100%", height: "100%" }}>
-              <div
-                className="col-md-4 flex flex-column justify-content-center align-items-center text-center mx-auto"
-                style={{ height: "100%", width: "100%" }}
-              >
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  fullWidth
-                  inputProps={{
-                    style: {
-                      color: "#000",
-                      textAlign: "center",
-                    },
-                  }}
-                  InputLabelProps={{
-                    style: {
-                      color: "#000",
-                    },
-                  }}
-                  type="text"
-                  className="outline"
-                  value={this.state.name}
-                  onChange={(e) => this.setState({ name: e.target.value })}
-                  id="credential"
-                  label="Credential Name"
-                  color="primary"
-                  name="credential"
-                  autoFocus
-                />
+        <div
+          style={{
+            height: "100%",
+            width: "100%",
+            backgroundColor: "white",
+          }}
+        >
+          <div className="row px-3" style={{ width: "100%", height: "100%" }}>
+            <div
+              className="col-md-4 flex flex-column justify-content-center align-items-center text-center mx-auto"
+              style={{ height: "100%", width: "100%", flexDirection: "row" }}
+            >
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                inputProps={{
+                  style: {
+                    color: "#000",
+                    textAlign: "center",
+                  },
+                }}
+                InputLabelProps={{
+                  style: {
+                    color: "#000",
+                  },
+                }}
+                type="number"
+                className="outline"
+                value={this.state.session}
+                onChange={(e) => this.setState({ session: e.target.value })}
+                id="credential"
+                label="Year"
+                placeholder="2019"
+                color="primary"
+                name="credential"
+                autoFocus
+              />
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                inputProps={{
+                  style: {
+                    color: "#000",
+                    textAlign: "center",
+                  },
+                }}
+                InputLabelProps={{
+                  style: {
+                    color: "#000",
+                  },
+                }}
+                type="number"
+                className="outline"
+                value={this.state.term}
+                onChange={(e) => this.setState({ term: e.target.value })}
+                id="credenkktial"
+                label="Term"
+                placeholder="e.g 1 for first term e.t.c."
+                color="primary"
+                name="credential"
+                autoFocus
+              />
+              {this.state.viewResult && (
                 <label style={{ width: "100%" }} htmlFor="btn-upload-file">
                   <input
                     id="btn-upload-file"
                     name="btn-upload-file"
                     style={{ display: "none" }}
                     type="file"
-                    accept="*"
+                    accept="application/pdf"
                     onChange={(e) => {
                       let fr = new FileReader();
                       let files: any = e.target.files;
@@ -367,9 +499,11 @@ class Credentials extends React.Component<Props> {
                     style={{ width: "100%" }}
                     component="span"
                   >
-                    Choose Credential
+                    Select Result
                   </Button>
                 </label>
+              )}
+              {this.state.viewResult && (
                 <Button
                   onClick={() => this.uploadDocument()}
                   startIcon={<CloudUpload />}
@@ -379,47 +513,88 @@ class Credentials extends React.Component<Props> {
                   color="primary"
                   style={{ width: "100%" }}
                 >
-                  Upload Credential
+                  {this.state.uploading ? "uploading...." : " Upload Result"}
                 </Button>
-              </div>
-              <div className="col-md-8" style={{ width: "100%" }}>
-                <div
-                  className="d-none d-md-block"
-                  style={{ width: "100%", height: "100%" }}
-                >
-                  {this.state.file ? (
-                    // <embed
-                    //   src={this.state.filePath}
-                    //   type={this.state.fileType}
-                    //   height="100%"
-                    //   width="100%"
-                    // ></embed>
+              )}
 
-                    <FileViewer
-                      fileType="docx"
-                      filePath={
-                        "https://firebasestorage.googleapis.com/v0/b/delivery-89fcb.appspot.com/o/random%2FMy%20Project.docx?alt=media&token=08fbc7bf-de58-496a-a3bd-6f5d667fd863"
-                      }
-                      // errorComponent={CustomErrorComponent}
-                      onError={(error) => {
-                        console.log(error);
+              {!this.state.viewResult && (
+                <Button
+                  onClick={() => this.viewResult()}
+                  startIcon={<CloudUpload />}
+                  size="large"
+                  variant="contained"
+                  color="primary"
+                  style={{ width: "100%" }}
+                >
+                  View Result
+                </Button>
+              )}
+              <Button
+                onClick={() => this.props.close()}
+                startIcon={<Close />}
+                size="large"
+                variant="contained"
+                color="secondary"
+                className="mt-3"
+                style={{ width: "100%" }}
+              >
+                Cancel
+              </Button>
+            </div>
+            <div className="col-md-8">
+              <div
+                className="d-none d-md-block"
+                style={{
+                  width: window.screen.width / 2,
+                  maxWidth: "100%",
+                }}
+              >
+                {this.state.file ? (
+                  isRemote ? (
+                    <embed
+                      style={{
+                        width: "100%",
+                        height: window.screen.height - 200,
                       }}
+                      src={this.state.filePath}
+                      type="application/pdf"
                     />
                   ) : (
-                    <div
-                      style={{ width: "100%", height: "inherit" }}
-                      className=" d-flex flex-column justify-content-center align-items-center"
-                    >
-                      <h1 className="mt-5">No Previews</h1>
-                      <span>Select a file to preview</span>
-                    </div>
-                  )}
-                </div>
+                    <DocViewer
+                      key={Math.random()}
+                      config={{
+                        header: {
+                          disableHeader: true,
+                          disableFileName: true,
+                          retainURLParams: true,
+                        },
+                      }}
+                      pluginRenderers={DocViewerRenderers}
+                      documents={doc}
+                    />
+                  )
+                ) : (
+                  <div
+                    style={{ width: "100%" }}
+                    className=" d-flex flex-column justify-content-center align-items-center"
+                  >
+                    {this.state.loading ? (
+                      <>
+                        <h4 className="mt-5">Loading Result .... </h4>
+                      </>
+                    ) : (
+                      <>
+                        <h4 className="mt-5">No Previews</h4>
+                        <span>Select a Credential to preview</span>
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>
-        )}
-        {this.showInitials() && !this.state.addCredential && (
+        </div>
+        {/* {this.showInitials() && !this.state.addCredential && (
           <div
             style={{
               height: "100%",
@@ -429,15 +604,11 @@ class Credentials extends React.Component<Props> {
             className="d-flex flex-column justify-content-center align-items-center px-3 text-center"
           >
             <img src="/img/credential.png" alt="credential icon" />
-            <h4 className="mt-3">Upload My Credentials</h4>
-            <span className="">
-              {Object.keys(cv).length > 0
-                ? "You don't have any credentials please upload credentials"
-                : "Please Submit CV before adding a credential"}
-            </span>
+            <h4 className="mt-3">Upload Student Result</h4>
+            <span className="">add a result for a student, lorem ipsum</span>
           </div>
-        )}
-        <Fab
+        )} */}
+        {/* <Fab
           onClick={() =>
             this.setState({
               addCredential: true,
@@ -452,7 +623,7 @@ class Credentials extends React.Component<Props> {
           aria-label="add"
         >
           <AddIcon />
-        </Fab>
+        </Fab> */}
 
         <BackDrop
           open={

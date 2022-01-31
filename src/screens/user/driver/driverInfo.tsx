@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export default function DriverInfo({ driverInfo }) {
+export default function DriverInfo({ driverInfo, result }) {
   const [open, setOpen] = useState(false);
   console.log(driverInfo);
   const classes = useStyles();
@@ -231,7 +231,38 @@ export default function DriverInfo({ driverInfo }) {
             </div>
           </div>
         </div>
-
+        <div className="d-flex flex-row">
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            onClick={() => result(true)}
+            endIcon={
+              isUpdating ? (
+                <CircularSpinner type="circular" color="#fff" size={20} />
+              ) : null
+            }
+            className="m-3"
+            disableElevation
+          >
+            Upload New Result
+          </Button>
+          <Button
+            fullWidth
+            variant="contained"
+            color="secondary"
+            onClick={() => result(false)}
+            endIcon={
+              isUpdating ? (
+                <CircularSpinner type="circular" color="#fff" size={20} />
+              ) : null
+            }
+            className="m-3"
+            disableElevation
+          >
+            View Result
+          </Button>
+        </div>
         <Modal
           open={showModal}
           handleClose={() => (!isUpdating ? setShowModal(false) : null)}
@@ -309,7 +340,7 @@ export default function DriverInfo({ driverInfo }) {
               <div className="col-md-12">
                 <TextField
                   id="license"
-                  label="Driver License"
+                  label="Registration number"
                   variant="outlined"
                   fullWidth
                   onChange={(e) => setDriverLicense(e.target.value)}
@@ -344,7 +375,7 @@ export default function DriverInfo({ driverInfo }) {
                 <span>Female</span>
               </div>
             </div>
-            <p>Guarrantor Information</p>
+            <p>Guardian / Parent Information</p>
             <div className="row">
               <div className="col-md-6">
                 <TextField

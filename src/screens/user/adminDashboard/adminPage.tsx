@@ -86,7 +86,7 @@ class AdminDashboard extends React.Component<Props> {
             <div
               style={{ cursor: "pointer" }}
               className="col-sm-12 col-lg-6 mb-4 mb-lg-0"
-              onClick={() => this.props.history.push("/dashboard/drivers")}
+              onClick={() => this.props.history.push("/dashboard/students")}
             >
               <AdminCard
                 icon={<PeopleIcon style={{ fontSize: 30, color: "green" }} />}
@@ -102,7 +102,7 @@ class AdminDashboard extends React.Component<Props> {
             <div
               style={{ cursor: "pointer" }}
               className="col-sm-12 col-lg-6 mb-4 mb-lg-0"
-              onClick={() => this.props.history.push("/dashboard/customers")}
+              onClick={() => this.props.history.push("/dashboard/teachers")}
             >
               <AdminCard
                 icon={<PeopleIcon style={{ fontSize: 30, color: "blue" }} />}

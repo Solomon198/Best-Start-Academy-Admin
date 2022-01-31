@@ -75,12 +75,12 @@ export default function CustomerInfoList({ userId, user }) {
 
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   dispatch({
-  //     type: GetCustomerAnalytics.GET_CUSTOMER_ANALYTICS_CALLER,
-  //     payload: userId,
-  //   });
-  // }, [userId]);
+  useEffect(() => {
+    dispatch({
+      type: GetCustomerAnalytics.GET_CUSTOMER_ANALYTICS_CALLER,
+      payload: userId,
+    });
+  }, [userId]);
 
   const isLoading =
     GetCustomerAnalytics.GET_CUSTOMER_ANALYTICS_STARTED ===

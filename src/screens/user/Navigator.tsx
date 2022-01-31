@@ -107,17 +107,17 @@ function Navigator(props: NavigatorProps) {
           icon: <PeopleIcon />,
           route: "/dashboard/teachers",
         },
-        {
-          id: "Subjects",
-          icon: <AirplayIcon />,
-          route: "/dashboard/subjects",
-        },
-        {
-          id: "Result Manager",
-          icon: <Dashboard />,
-          route: "/dashboard/subjects",
-        },
         // {
+        //   id: "Subjects",
+        //   icon: <AirplayIcon />,
+        //   route: "/dashboard/subjects",
+        // },
+        // {
+        //   id: "Result Manager",
+        //   icon: <Dashboard />,
+        //   route: "/dashboard/subjects",
+        // },
+        // // {
         //   id: "Environment Configuration",
         //   icon: <SettingsInputComponentIcon />,
         //   route: "/dashboard/environment-configuration",

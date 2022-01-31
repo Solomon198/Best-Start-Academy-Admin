@@ -10,6 +10,7 @@ import { Add } from "@material-ui/icons";
 import { NoRecordsFound } from "../../../components/app.no.records.found";
 import DescriptionIcon from "@material-ui/icons/Description";
 import AddDriverAccount from "./addAccount.modal";
+import Result from "../subject/driversPage";
 
 type Props = {
   drivers: any;
@@ -50,6 +51,10 @@ const mapDispatchToProps = (dispatch: any) => ({
 });
 
 class DriversPage extends React.Component<Props> {
+  state = {
+    showAddResult: false,
+    uploadNew: true,
+  };
   componentDidMount() {
     this.props.getDrivers();
   }
@@ -57,6 +62,15 @@ class DriversPage extends React.Component<Props> {
     const loading =
       Driver.GET_DRIVER_STARTER === this.props.gettingDriversStatus;
 
+    if (this.state.showAddResult) {
+      return (
+        <Result
+          uploadNew={this.state.uploadNew}
+          driverInfo={this.props.viewDriver}
+          close={() => this.setState({ showAddResult: false })}
+        />
+      );
+    }
     return (
       <>
         {loading && (
@@ -167,7 +181,15 @@ class DriversPage extends React.Component<Props> {
               >
                 <div>
                   {this.props.viewDriver && (
-                    <DriverInfo driverInfo={this.props.viewDriver} />
+                    <DriverInfo
+                      result={(status) =>
+                        this.setState({
+                          showAddResult: true,
+                          uploadNew: status,
+                        })
+                      }
+                      driverInfo={this.props.viewDriver}
+                    />
                   )}
                 </div>
               </div>

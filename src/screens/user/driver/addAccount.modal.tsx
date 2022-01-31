@@ -135,7 +135,7 @@ export default function AddAccount() {
           }}
         >
           <h5 style={{ fontWeight: "bold", marginBottom: 20 }}>
-            Create Driver Account
+            Create Student Account
           </h5>
 
           <div className=" w-100 mb-3">
@@ -167,7 +167,6 @@ export default function AddAccount() {
             </label>
           </div>
 
-          {/* <p style={{ marginBottom: -10 }}>Driver License</p> */}
           {/* <div
             className="my-3"
             style={{
@@ -248,7 +247,7 @@ export default function AddAccount() {
             <div className="col-md-12">
               <TextField
                 id="license"
-                label="Driver License"
+                label="Registration Number"
                 variant="outlined"
                 fullWidth
                 onChange={(e) => setDriverLicense(e.target.value)}
@@ -293,7 +292,7 @@ export default function AddAccount() {
               <span>Female</span>
             </div>
           </div>
-          <p>Guarrantor Information</p>
+          <p>Parent / Guardian Information</p>
           <div className="row">
             <div className="col-md-6">
               <TextField
@@ -422,7 +421,7 @@ export default function AddAccount() {
             className="mt-3"
             disableElevation
           >
-            {isAdding ? "Adding Driver ..." : "Add driver"}
+            {isAdding ? "Adding Student ..." : "Add Student"}
           </Button>
         </Paper>
       </Modal>

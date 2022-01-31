@@ -91,7 +91,7 @@ export default function AddAccount() {
           }}
         >
           <h5 style={{ fontWeight: "bold", marginBottom: 20 }}>
-            Create Customer Account
+            Create Teacher Account
           </h5>
 
           <div className=" w-100 mb-3">
@@ -206,7 +206,7 @@ export default function AddAccount() {
             className="mt-3"
             disableElevation
           >
-            {isAdding ? "Creating customer ..." : "Add customer"}
+            {isAdding ? "Creating Teacher ..." : "Add Teacher"}
           </Button>
         </Paper>
       </Modal>

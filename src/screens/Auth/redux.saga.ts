@@ -1,4 +1,4 @@
-import { put, takeEvery, call } from 'redux-saga/effects';
+import { put, takeEvery, call } from "redux-saga/effects";
 import {
   inputAction,
   loginAction,
@@ -7,11 +7,11 @@ import {
   sendVerificationPin,
   ressetPassword,
   LogOut,
-} from './auth.actions';
-import axios from 'axios';
-import * as joi from 'joi';
+} from "./auth.actions";
+import axios from "axios";
+import * as joi from "joi";
 
-import config from '../../configs/env.config';
+import config from "../../configs/env.config";
 const configuration = config();
 
 function* watchSetSignupFullName() {
@@ -101,9 +101,9 @@ const validateLogin = joi.object({
 // };
 
 const loginUser = async (payload: any) => {
-  return axios.post(`https://dansako-3c135.web.app/admin/login`, {
+  return axios.post(`${configuration.API_ENDPOINT}/admin/login`, {
     phoneNumber: payload.phoneNumber,
-    countryCode: 'NG',
+    countryCode: "NG",
     password: payload.password,
   });
 };
@@ -121,7 +121,7 @@ function* watchLoginAccount() {
           type: loginAction.LOGIN_SUCCESS,
           payload: $loginUser.data,
         });
-        console.log('Login Status', $loginUser);
+        console.log("Login Status", $loginUser);
       }
     } catch (e) {
       console.log(e);
@@ -132,7 +132,7 @@ function* watchLoginAccount() {
         message = e.message;
       }
 
-      console.log('Login Error Message', message);
+      console.log("Login Error Message", message);
       yield put({ type: loginAction.LOGIN_FAILED, payload: message });
     }
   });
@@ -145,18 +145,18 @@ const validateSignUp = joi.object({
   fullName: joi.string().min(4),
 });
 const signUpUser = async (payload: any) => {
-  return axios.post(configuration.API_ENDPOINT + '/signUp', {
+  return axios.post(configuration.API_ENDPOINT + "/signUp", {
     phoneNumber: payload.phoneNumber,
-    countryCode: 'NG',
+    countryCode: "NG",
     password: payload.password,
     fullName: payload.fullName,
   });
 };
 
 const verifyPhoneNumber = async (payload: any) => {
-  return axios.post(configuration.API_ENDPOINT + '/verify/sms', {
+  return axios.post(configuration.API_ENDPOINT + "/verify/sms", {
     phoneNumber: payload.phoneNumber,
-    countryCode: 'NG',
+    countryCode: "NG",
   });
 };
 
@@ -179,7 +179,7 @@ function* watchSignUpAccount() {
           user: $signUpUser.payload,
         };
         yield put({ type: signUpAction.SIGNUP_SUCCESS, payload: payload });
-        action.navigation.push('/auth/verification');
+        action.navigation.push("/auth/verification");
       }
     } catch (e) {
       let message: string;
@@ -200,7 +200,7 @@ const validateVerifyPinPayload = joi.object({
 });
 
 const validatePin = async (payload: any) => {
-  return axios.post(configuration.API_ENDPOINT + '/verify/code', {
+  return axios.post(configuration.API_ENDPOINT + "/verify/code", {
     pin: payload.pin,
     token: payload.token,
   });
@@ -225,9 +225,9 @@ function* watchVerifyPin() {
         });
         if (action.isResset) {
           //navigate to resset page
-          action.payload.history.push('/auth/resset-password');
+          action.payload.history.push("/auth/resset-password");
         } else {
-          action.payload.history.push('/');
+          action.payload.history.push("/");
         }
       }
     } catch (e) {
@@ -273,7 +273,7 @@ function* watchSendVerificationPin() {
 
           if (action.history) {
             action.history.push({
-              pathname: '/auth/verification',
+              pathname: "/auth/verification",
               isResset: true,
             });
           }
@@ -295,7 +295,7 @@ function* watchSendVerificationPin() {
 }
 
 const ressetPasswordRequest = async (payload: any) => {
-  return axios.post(configuration.API_ENDPOINT + '/reset-password', {
+  return axios.post(configuration.API_ENDPOINT + "/reset-password", {
     password: payload.password,
     accessToken: payload.accessToken,
   });
@@ -324,7 +324,7 @@ function* watchRessetPassword() {
           if (action.payload.password !== action.confirmPassword) {
             yield put({
               type: ressetPassword.RESSET_PASSWORD_FAILED,
-              payload: 'Password do not match!',
+              payload: "Password do not match!",
             });
           } else {
             const $ressetPassword = yield call(

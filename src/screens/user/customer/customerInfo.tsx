@@ -129,8 +129,6 @@ export default function CustomerInfo({ customerInfo }) {
                     marginLeft: 1,
                   }}
                   onClick={() => setShowModal(true)}
-                  // onClick={_onButtonClick}
-                  // className={classes.buttonStyle}
                 >
                   Edit profile
                 </Button>
